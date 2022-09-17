@@ -1,4 +1,6 @@
 from flask import Flask
+
+
 from dotenv import load_dotenv
 from pathlib import Path
 import os
@@ -21,8 +23,10 @@ def get_env_variable(env_var_name: str):
         return os.getenv(env_var_name)
 
 
-from extentions import *
+from .extentions import *
 
+from .auth import auth_bp
+from .gallery import gallery_bp
 
 basedir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 app = Flask('Arcana')
@@ -34,7 +38,9 @@ def register_extentions(app):
     admin = Admin(app)
 
 def register_blueprints(app):
-    pass
+    app.register_blueprint(auth_bp, url_prefix='/auth')
+    app.register_blueprint(gallery_bp, url_prefix='/gallery')
+
 
 
 def create_app(): 
@@ -45,6 +51,8 @@ def create_app():
         USERNAME=get_env_variable('USERNAME'),
         PASSWORD=get_env_variable('PASSWORD')
     )
+    register_extentions(app)
+    register_blueprints(app)
     return app
 
 if __name__=='__main__':
